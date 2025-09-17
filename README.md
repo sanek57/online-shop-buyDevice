@@ -27,7 +27,7 @@
 - axios
 - react-router-dom
 - MobX
-
+- jwt-decode
 
 ---
 
@@ -38,6 +38,14 @@ GET
 POST
 DELETE
 
-Devices: /api/devices
+Devices: /api/device
+GET
+POST
+
+Type: /api/type
+GET
+POST
+
+Brand: /api/brand
 GET
 POST

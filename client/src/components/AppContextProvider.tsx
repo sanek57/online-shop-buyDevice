@@ -4,20 +4,25 @@ import DeviceStore from '../store/deviceStore'
 
 export interface UserContextType {
   user: UserStore
+}
+
+export interface DeviceContextType {
   devices: DeviceStore
 }
 
-export const UserContext = createContext<UserContextType | undefined>(undefined)
+export type ContextType = UserContextType | DeviceContextType
 
-export const UserContextProvider = ({ children }: React.PropsWithChildren) => {
+export const AppContext = createContext<ContextType | undefined>(undefined)
+
+export const AppContextProvider = ({ children }: React.PropsWithChildren) => {
   return (
-    <UserContext.Provider
+    <AppContext.Provider
       value={{
         user: new UserStore(),
         devices: new DeviceStore(),
       }}
     >
       {children}
-    </UserContext.Provider>
+    </AppContext.Provider>
   )
 }

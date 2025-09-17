@@ -1,11 +1,21 @@
 import { useContext } from 'react'
 import {
-  UserContext,
+  AppContext,
+  type ContextType,
   type UserContextType,
-} from '../components/UserContextProvider'
+} from '../components/AppContextProvider'
 
 export const useUserContext = (): UserContextType => {
-  const context = useContext(UserContext)
+  const context = useContext<ContextType | undefined>(AppContext)
 
-  return context
+  if (!context) {
+    throw new Error('useUserContext must be used within an AppContext Provider')
+  }
+
+  // Проверяем, что контекст соответствует UserContextType
+  if ('user' in context) {
+    return context as UserContextType
+  }
+
+  throw new Error('Context is not of type UserContextType')
 }

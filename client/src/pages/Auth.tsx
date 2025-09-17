@@ -1,9 +1,45 @@
-import React from 'react'
-import { Button, Card, Container, Form, Row } from 'react-bootstrap'
-import { NavLink } from 'react-router'
-import { REGISTRATION_ROUTE } from '../utils/consts'
+import React, { useState } from 'react'
+import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap'
+import { NavLink, useNavigate } from 'react-router'
+import { LOGIN_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE } from '../utils/consts'
+import { useLocation } from 'react-router'
+import { useUserContext } from '../hooks/useUserContext'
+import { login, registration } from '../http/userAPI'
+import { observer } from 'mobx-react-lite'
+import type { User } from '../store/types'
+import { CustomError } from '../http'
 
-export const Auth = () => {
+export const Auth = observer(() => {
+  const location = useLocation()
+  const isLogin = location.pathname === LOGIN_ROUTE
+  const { user } = useUserContext()
+  const navigate = useNavigate()
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+
+  const checkHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+
+    try {
+      let response: User
+
+      if (isLogin) {
+        response = await login(email, password)
+      } else {
+        response = await registration(email, password)
+      }
+
+      user.user = response
+      user.isAuth = true
+      // console.log(response)
+      navigate(SHOP_ROUTE)
+    } catch (e) {
+      if (e instanceof CustomError) {
+        alert(e.message)
+      }
+    }
+  }
+
   return (
     <Container
       className='d-flex justify-content-center align-items-center'
@@ -12,19 +48,56 @@ export const Auth = () => {
       <Card style={{ width: 600 }} className='p-5'>
         <h2 className='m-auto'>Авторизация</h2>
         <Form className='d-flex flex-column'>
-          <Form.Control className='mt-3' placeholder='Введите ваш email...' />
-          <Form.Control className='mt-3' placeholder='Введите ваш пароль...' />
-          <Row className='d-flex justify-content-between mt-3 ps-3 pe-3'>
-            <div> 
-              Еще нет аккаунта?{' '}
-              <NavLink to={REGISTRATION_ROUTE}>Зарегистрируйся!</NavLink>
-            </div>
-            <Button variant={'outline-success'} className='mt-3 align-self-end'>
-              Войти
-            </Button>
-          </Row>
+          <Form.Control
+            className='mt-3'
+            placeholder='Введите ваш email...'
+            value={email}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setEmail(e.target.value)
+            }
+          />
+          <Form.Control
+            className='mt-3'
+            placeholder='Введите ваш пароль...'
+            value={password}
+            type='password'
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.target.value)
+            }
+          />
+          <Container>
+            <Row className='d-flex justify-content-between mt-3'>
+              <Col
+                sm={8}
+                className='d-flex justify-content-start align-items-center'
+              >
+                {' '}
+                {isLogin ? (
+                  <div>
+                    Нет аккаунта?{' '}
+                    <NavLink to={REGISTRATION_ROUTE}>Зарегистрируйся!</NavLink>
+                  </div>
+                ) : (
+                  <div>
+                    Есть аккаунт? <NavLink to={LOGIN_ROUTE}>Войдите!</NavLink>
+                  </div>
+                )}
+              </Col>
+              <Col
+                sm={4}
+                className='d-flex justify-content-end align-items-center'
+              >
+                <Button
+                  variant={'outline-success'}
+                  onClick={e => checkHandler(e)}
+                >
+                  {isLogin ? 'Войти' : 'Регистрация'}
+                </Button>
+              </Col>
+            </Row>
+          </Container>
         </Form>
       </Card>
     </Container>
   )
-}
+})

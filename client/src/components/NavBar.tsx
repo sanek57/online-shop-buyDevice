@@ -1,12 +1,21 @@
 import React from 'react'
 import { useUserContext } from '../hooks/useUserContext'
 import { Button, Container, Nav, Navbar } from 'react-bootstrap'
-import { NavLink } from 'react-router'
-import { SHOP_ROUTE } from '../utils/consts'
+import { NavLink, useNavigate } from 'react-router'
+import { ADMIN_ROUTE, LOGIN_ROUTE, SHOP_ROUTE } from '../utils/consts'
 import { observer } from 'mobx-react-lite'
 
 export const NavBar = observer(() => {
   const { user } = useUserContext()
+
+  const navigate = useNavigate()
+
+  const logoutHandler = () => {
+    user.isAuth = false
+    user.user = null
+    localStorage.removeItem('token')
+  }
+
   return (
     <Navbar bg='dark' data-bs-theme='dark'>
       <Container>
@@ -21,8 +30,17 @@ export const NavBar = observer(() => {
         </NavLink>
         {user.isAuth ? (
           <Nav className='ml-auto'>
-            <Button variant={'outline-light'}>Админ панель</Button>
-            <Button variant={'outline-light'} className="ms-2">
+            <Button
+              variant={'outline-light'}
+              onClick={() => navigate(ADMIN_ROUTE)}
+            >
+              Админ панель
+            </Button>
+            <Button
+              variant={'outline-light'}
+              className='ms-2'
+              onClick={logoutHandler}
+            >
               Выйти
             </Button>
           </Nav>
@@ -30,9 +48,7 @@ export const NavBar = observer(() => {
           <Nav className='ml-auto'>
             <Button
               variant={'outline-light'}
-              onClick={() => {
-                user.isAuth = true
-              }}
+              onClick={() => navigate(LOGIN_ROUTE)}
             >
               Авторизация
             </Button>

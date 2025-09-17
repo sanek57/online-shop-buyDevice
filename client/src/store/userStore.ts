@@ -3,7 +3,7 @@ import type { User } from './types'
 
 export default class UserStore {
   private _isAuth: boolean = false
-  private _user: User
+  private _user: User | null
 
   constructor() {
     makeAutoObservable(this)
@@ -13,7 +13,7 @@ export default class UserStore {
     this._isAuth = flag
   }
 
-  set user(user: User) {
+  set user(user: User | null) {
     this._user = user
   }
 
@@ -21,7 +21,7 @@ export default class UserStore {
     return this._isAuth
   }
 
-  get user(): User {
+  get user(): User | null {
     return this._user
   }
 }
