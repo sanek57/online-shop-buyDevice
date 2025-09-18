@@ -2,12 +2,12 @@ const uuid = require('uuid')
 const path = require('path')
 const { Device, DeviceInfo } = require('../models/models')
 const ApiError = require('../error/ApiError')
-const { log } = require('console')
+const { log, error } = require('console')
 
 class DeviceController {
   async create(req, res, next) {
     try {
-      const { name, price, brandId, typeId, info } = req.body // info - [deviceInfo]
+      let { name, price, brandId, typeId, info } = req.body // info - [deviceInfo]
       const { img } = req.files
 
       const fileName = uuid.v4() + '.jpg'
@@ -51,42 +51,47 @@ class DeviceController {
     // findAndCountAll - предназначена для пагинации
     // найдет все и посчитает общее количество {col: number, row: [{}]}
 
-    if (!brandId && !typeId) {
-      devices = await Device.findAndCountAll({ limit, offset })
-    }
+    try {
+      if (!brandId && !typeId) {
+        devices = await Device.findAndCountAll({ limit, offset })
+      }
 
-    if (brandId && !typeId) {
-      devices = await Device.findAndCountAll({
-        where: {
-          brandId,
-        },
-        limit,
-        offset,
-      })
-    }
+      if (brandId && !typeId) {
+        devices = await Device.findAndCountAll({
+          where: {
+            brandId,
+          },
+          limit,
+          offset,
+        })
+      }
 
-    if (!brandId && typeId) {
-      devices = await Device.findAndCountAll({
-        where: {
-          typeId,
-        },
-        limit,
-        offset,
-      })
-    }
+      if (!brandId && typeId) {
+        devices = await Device.findAndCountAll({
+          where: {
+            typeId,
+          },
+          limit,
+          offset,
+        })
+      }
 
-    if (brandId && typeId) {
-      devices = await Device.findAndCountAll({
-        where: {
-          brandId,
-          typeId,
-        },
-        limitm,
-        offset,
-      })
-    }
+      if (brandId && typeId) {
+        console.log(brandId, typeId)
+        devices = await Device.findAndCountAll({
+          where: {
+            brandId,
+            typeId,
+          },
+          limit,
+          offset,
+        })
+      }
 
-    return res.status(200).json(devices)
+      return res.status(200).json(devices)
+    } catch (e) {
+      next(ApiError.badRequest(e.message))
+    }
   }
   async getOne(req, res) {
     const { id } = req.params

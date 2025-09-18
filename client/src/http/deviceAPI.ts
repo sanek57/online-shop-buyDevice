@@ -2,7 +2,7 @@ import type { AxiosError, AxiosResponse } from 'axios'
 import type { Brand, Device, Type } from '../store/types'
 import { $authHost, CustomError, type ErrorResponse } from '.'
 
-export const createType = async (type: Type): Promise<Type> => {
+export const createType = async (type: Type): Promise<AxiosResponse<Type>> => {
   try {
     const { data } = await $authHost.post<Type>('api/type', type)
 
@@ -15,7 +15,7 @@ export const createType = async (type: Type): Promise<Type> => {
   }
 }
 
-export const fetchTypes = async (): Promise<Type[]> => {
+export const fetchTypes = async (): Promise<AxiosResponse<Type[]>> => {
   try {
     const { data } = await $authHost.get<Type[]>('api/type')
 
@@ -28,7 +28,9 @@ export const fetchTypes = async (): Promise<Type[]> => {
   }
 }
 
-export const createBrad = async (brand: Brand): Promise<Brand> => {
+export const createBrad = async (
+  brand: Brand
+): Promise<AxiosResponse<Brand>> => {
   try {
     const { data } = await $authHost.post<Brand>('api/brand', brand)
 
@@ -41,7 +43,7 @@ export const createBrad = async (brand: Brand): Promise<Brand> => {
   }
 }
 
-export const fetchBrands = async (): Promise<Brand[]> => {
+export const fetchBrands = async (): Promise<AxiosResponse<Brand[]>> => {
   try {
     const { data } = await $authHost.get<Brand[]>('api/brand')
 
@@ -54,7 +56,9 @@ export const fetchBrands = async (): Promise<Brand[]> => {
   }
 }
 
-export const createDevice = async (device: Device): Promise<Device> => {
+export const createDevice = async (
+  device: FormData
+): Promise<AxiosResponse<Device>> => {
   try {
     const { data } = await $authHost.post<Device>('api/device', device)
 
@@ -67,12 +71,29 @@ export const createDevice = async (device: Device): Promise<Device> => {
   }
 }
 
-export const fetchDevices = async (): Promise<Device[]> => {
-  try { 
-    // тут еще сделано для пагинации
-    const { data } = await $authHost.get<AxiosResponse>('api/device')
+interface DeviceResponse {
+  count: number
+  rows: Device[]
+}
 
-    return data.rows as Device[]
+export const fetchDevices = async (
+  typeId: number | null,
+  brandId: number | null,
+  page: number,
+  limit: number
+): Promise<AxiosResponse<DeviceResponse>> => {
+  try {
+    // тут еще сделано для пагинации
+    const { data } = await $authHost.get<DeviceResponse>('api/device', {
+      params: {
+        typeId,
+        brandId,
+        page,
+        limit,
+      },
+    })
+
+    return data
   } catch (e) {
     const { response } = e as AxiosError
     const { data } = response as AxiosResponse<ErrorResponse>

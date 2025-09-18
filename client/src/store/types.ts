@@ -21,20 +21,21 @@ export interface Brand {
   updatedAt?: Date
 }
 
+export interface DescriptionDevice {
+  id: number
+  title: string
+  description: string
+  createdAt?: Date
+  updatedAt?: Date
+}
+
 export interface Device {
   id: number
   name: string
   price: number
   rating: number
   img?: string
-  createdAt?: Date
-  updatedAt?: Date
-}
-
-export interface DescriptionDevice {
-  id: number
-  title: string
-  description: string
+  info?: DescriptionDevice[] | string
   createdAt?: Date
   updatedAt?: Date
 }

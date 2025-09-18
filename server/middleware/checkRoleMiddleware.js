@@ -12,6 +12,9 @@ module.exports = function (roles) {
       }
 
       const decoded = jwt.verify(token, process.env.SECRET_KEY)
+
+      
+
       if (decoded.roles !== roles) {
         return res.status(403).json({ message: 'Нет доступа' })
       }

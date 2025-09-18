@@ -3,13 +3,14 @@ import type { Brand, Device, Type } from './types'
 
 export default class DeviceStore {
   private _types: Type[] = []
-
   private _brands: Brand[] = []
-
   private _devices: Device[] = []
 
   private _selectedType: Type
   private _selectedBrand: Brand
+  private _page: number = 1
+  private _totalCount: number
+  private _limit: number = 3
 
   constructor() {
     makeAutoObservable(this)
@@ -40,6 +41,7 @@ export default class DeviceStore {
   }
 
   set selectedType(type: Type) {
+    this._page = 1
     this._selectedType = type
   }
 
@@ -48,10 +50,35 @@ export default class DeviceStore {
   }
 
   set selectedBrand(brand: Brand) {
+    this._page = 1
     this._selectedBrand = brand
   }
 
   get selectedBrand(): Brand {
     return this._selectedBrand
+  }
+
+  set page(page: number) {
+    this._page = page
+  }
+
+  get page(): number {
+    return this._page
+  }
+
+  set totalCount(totalCount: number) {
+    this._totalCount = totalCount
+  }
+
+  get totalCount(): number {
+    return this._totalCount
+  }
+
+  set limit(limit: number) {
+    this._limit = limit
+  }
+
+  get limit(): number {
+    return this._limit
   }
 }
