@@ -5,8 +5,8 @@ class ApiError extends Error {
     this.message = message
   }
 
-  static unauthorizedError() {
-    return new ApiError(401, 'Пользователь не авторизован')
+  static unauthorizedError(message = 'Пользователь не авторизован') {
+    return new ApiError(401, message)
   }
 
   static badRequest(message, errors = []) {

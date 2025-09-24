@@ -4,13 +4,16 @@ import { login, logout, registration } from '../http/userAPI'
 import axios, { AxiosError, type AxiosResponse } from 'axios'
 import { CustomError, type ErrorResponse } from '../http'
 import { jwtDecode } from 'jwt-decode'
+import { Cookies } from 'react-cookie'
 
 export default class UserStore {
   private _isAuth: boolean = false
   private _user: User | null = {} as User
   private _isLoading: boolean = false
+  private _cookies: Cookies
 
   constructor() {
+    this._cookies = new Cookies()
     makeAutoObservable(this)
   }
 
@@ -92,6 +95,7 @@ export default class UserStore {
       const response = await logout()
 
       localStorage.removeItem('token')
+      this._cookies.remove('refreshToken')
 
       this.user = {} as User
       this.isAuth = false
@@ -116,9 +120,6 @@ export default class UserStore {
           withCredentials: true, // включаем cookie в запрос
         }
       )
-
-      console.log(response)
-
       localStorage.setItem('token', response.data.accessToken)
 
       this.user = jwtDecode(response.data.accessToken)

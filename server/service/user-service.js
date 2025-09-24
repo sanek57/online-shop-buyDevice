@@ -41,7 +41,7 @@ class UserService {
     })
 
     return {
-      ...tokens
+      ...tokens,
     }
   }
 
@@ -74,7 +74,7 @@ class UserService {
     await tokenService.saveRefreshToken(userDto.id, tokens.refreshToken)
 
     return {
-      ...tokens
+      ...tokens,
     }
   }
 
@@ -89,9 +89,12 @@ class UserService {
     }
 
     const userData = tokenService.validateRefreshToken(refreshToken)
-    const tokenFromDataBase = await tokenService.findToken(refreshToken)
+    if (!userData) {
+      throw ApiError.unauthorizedError('Время активной сессия истекло.')
+    }
 
-    if (!tokenFromDataBase || !userData) {
+    const tokenFromDataBase = await tokenService.findToken(refreshToken)
+    if (!tokenFromDataBase) {
       throw ApiError.unauthorizedError()
     }
     const user = await User.findOne({ where: { id: userData.id } })
@@ -106,7 +109,7 @@ class UserService {
     await tokenService.saveRefreshToken(userDto.id, tokens.refreshToken)
 
     return {
-      ...tokens
+      ...tokens,
     }
   }
 }

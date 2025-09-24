@@ -1,4 +1,4 @@
-import React, { createContext } from 'react'
+import React, { createContext, useMemo } from 'react'
 import UserStore from '../store/userStore'
 import DeviceStore from '../store/deviceStore'
 
@@ -12,14 +12,17 @@ export interface DeviceContextType {
 
 export type ContextType = UserContextType | DeviceContextType
 
-export const AppContext = createContext<ContextType | undefined>(undefined)
+export const AppContext = createContext<ContextType | null>(null)
 
 export const AppContextProvider = ({ children }: React.PropsWithChildren) => {
+  const userStore = useMemo(() => new UserStore(), [])
+  const deiveStore = useMemo(() => new DeviceStore(), [])
+
   return (
     <AppContext.Provider
       value={{
-        user: new UserStore(),
-        devices: new DeviceStore(),
+        user: userStore,
+        devices: deiveStore,
       }}
     >
       {children}

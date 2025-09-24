@@ -40,13 +40,14 @@ export const logout = async (): Promise<void> => {
   console.log('logout', response)
 }
 
-export const getProtectedData = async (): Promise<void> => {
+export const getProtectedData = async (): Promise<AxiosResponse> => {
   try {
-    const { data } = await $authHost.get<AxiosResponse>(
+    const response = await $authHost.get<AxiosResponse>(
       'api/user/protectedData'
     )
 
-    console.log(data)
+    console.log(response)
+    return response
   } catch (e) {
     const { response } = e as AxiosError
     const { data } = response as AxiosResponse<ErrorResponse>

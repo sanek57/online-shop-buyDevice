@@ -10,15 +10,19 @@ const App = observer(() => {
   const { user } = useUserContext()
 
   useEffect(() => {
-    if (localStorage.getItem('token')) {
-      try {
-        user.checkAuth()
-      } catch (e) {
-        if (e instanceof CustomError) {
-          alert(e.message)
+    const check = async () => {
+      if (localStorage.getItem('token')) {
+        try {
+          user.checkAuth()
+        } catch (e) {
+          console.log(123, e)
+          if (e instanceof CustomError) {
+            alert(e.message)
+          }
         }
       }
     }
+    check()
   }, [])
 
   return (
