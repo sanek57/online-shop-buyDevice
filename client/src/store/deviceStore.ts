@@ -6,10 +6,10 @@ export default class DeviceStore {
   private _brands: Brand[] = []
   private _devices: Device[] = []
 
-  private _selectedType: Type
-  private _selectedBrand: Brand
+  private _selectedType: Type = {} as Type
+  private _selectedBrand: Brand = {} as Brand
   private _page: number = 1
-  private _totalCount: number
+  private _totalCount: number = 0
   private _limit: number = 3
 
   constructor() {

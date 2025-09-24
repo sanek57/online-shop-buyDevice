@@ -25,12 +25,15 @@ export const Shop = observer(() => {
   }, [])
 
   useEffect(() => {
-    fetchDevices(devices.selectedType?.id, devices.selectedBrand?.id, devices.page, 2).then(
-      data => {
-        devices.devices = data.rows
-        devices.totalCount = data.count
-      }
-    )
+    fetchDevices(
+      devices.selectedType?.id,
+      devices.selectedBrand?.id,
+      devices.page,
+      2
+    ).then(data => {
+      devices.devices = data.rows
+      devices.totalCount = data.count
+    })
   }, [devices.page, devices.selectedBrand, devices.selectedType])
 
   return (

@@ -4,16 +4,21 @@ import { Button, Container, Nav, Navbar } from 'react-bootstrap'
 import { NavLink, useNavigate } from 'react-router'
 import { ADMIN_ROUTE, LOGIN_ROUTE, SHOP_ROUTE } from '../utils/consts'
 import { observer } from 'mobx-react-lite'
+import { CustomError } from '../http'
 
 export const NavBar = observer(() => {
   const { user } = useUserContext()
-
   const navigate = useNavigate()
 
-  const logoutHandler = () => {
-    user.isAuth = false
-    user.user = null
-    localStorage.removeItem('token')
+  const logoutHandler = async () => {
+    try {
+      await user.logout()
+      navigate(LOGIN_ROUTE)
+    } catch (e) {
+      if (e instanceof CustomError) {
+        alert(e.message)
+      }
+    }
   }
 
   return (

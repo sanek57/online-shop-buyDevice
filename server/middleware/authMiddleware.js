@@ -1,19 +1,32 @@
 const jwt = require('jsonwebtoken')
+const ApiError = require('../error/ApiError')
+const tokenService = require('../service/token-service')
 
 module.exports = function (req, res, next) {
   if (req.method === 'OPTIONS') {
     next()
   }
+
   try {
-    const token = req.headers.authorization.split(' ')[1] // Bearer asfasnfkajsfnjk
-    if (!token) {
-      return res.status(401).json({ message: 'Не авторизован' })
+    const autHeader = req.headers.authorization
+
+    if (!autHeader) {
+      return next(ApiError.unauthorizedError())
     }
 
-    const decoded = jwt.verify(token, process.env.SECRET_KEY)
-    req.user = decoded
+    const accessToken = autHeader.split(' ')[1] // Bearer asfasnfkajsfnjk
+    if (!accessToken) {
+      return next(ApiError.unauthorizedError())
+    }
+
+    const userData = tokenService.validateAccessToken(accessToken)
+    if (!userData) {
+      return next(ApiError.unauthorizedError())
+    }
+
+    req.user = userData
     next()
-  } catch (error) {
-    return res.status(403).json({ message: 'Invalid token' })
+  } catch (e) {
+    return next(ApiError.unauthorizedError())
   }
 }

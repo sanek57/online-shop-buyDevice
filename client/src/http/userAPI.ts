@@ -1,53 +1,52 @@
 import type { AxiosError, AxiosResponse } from 'axios'
-import { $authHost, $host, CustomError, type ErrorResponse } from '.'
-import { jwtDecode } from 'jwt-decode'
-import type { User } from '../store/types'
+import { $authHost, CustomError, type ErrorResponse } from '.'
+import type { AuthResponse } from '../store/types'
 
 export const registration = async (
   email: string,
   password: string
-): Promise<User> => {
-  try {
-    const { data } = await $host.post<string>('api/user/registration', {
-      email,
-      password,
-      roles: 'ADMIN',
-    })
+): Promise<AxiosResponse<AuthResponse>> => {
+  const response = await $authHost.post<AuthResponse>('api/user/registration', {
+    email,
+    password,
+    roles: 'ADMIN',
+  })
 
-    localStorage.setItem('token', data?.token)
+  console.log('registration', response)
 
-    return jwtDecode(data?.token) as User
-  } catch (e) {
-    const { response } = e as AxiosError
-    const { data } = response as AxiosResponse<ErrorResponse>
-
-    throw new CustomError(data.message)
-  }
+  return response
 }
 
-export const login = async (email: string, password: string): Promise<User> => {
-  try {
-    const { data } = await $host.post<string>('api/user/login', {
+export const login = async (
+  email: string,
+  password: string
+): Promise<AxiosResponse<AuthResponse>> => {
+  const response = await $authHost.post<AuthResponse>(
+    'api/user/login',
+    {
       email,
       password,
-    })
+    }
+  )
 
-    localStorage.setItem('token', data?.token)
+  console.log('login', response)
 
-    return jwtDecode(data?.token) as User
-  } catch (e) {
-    const { response } = e as AxiosError
-    const { data } = response as AxiosResponse<ErrorResponse>
-    throw new CustomError(data.message)
-  }
+  return response
 }
 
-// при обновлении страницы проверяем валидность токена
-export const check = async (): Promise<User> => {
-  try {
-    const { data } = await $authHost.get<string>('api/user/auth')
+export const logout = async (): Promise<void> => {
+  const response = await $authHost.post('api/user/logout')
 
-    return jwtDecode(data?.token) as User
+  console.log('logout', response)
+}
+
+export const getProtectedData = async (): Promise<void> => {
+  try {
+    const { data } = await $authHost.get<AxiosResponse>(
+      'api/user/protectedData'
+    )
+
+    console.log(data)
   } catch (e) {
     const { response } = e as AxiosError
     const { data } = response as AxiosResponse<ErrorResponse>

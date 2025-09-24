@@ -4,9 +4,7 @@ import { NavLink, useNavigate } from 'react-router'
 import { LOGIN_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE } from '../utils/consts'
 import { useLocation } from 'react-router'
 import { useUserContext } from '../hooks/useUserContext'
-import { login, registration } from '../http/userAPI'
 import { observer } from 'mobx-react-lite'
-import type { User } from '../store/types'
 import { CustomError } from '../http'
 
 export const Auth = observer(() => {
@@ -21,17 +19,12 @@ export const Auth = observer(() => {
     e.preventDefault()
 
     try {
-      let response: User
-
       if (isLogin) {
-        response = await login(email, password)
+        await user.login(email, password)
       } else {
-        response = await registration(email, password)
+        await user.registration(email, password)
       }
 
-      user.user = response
-      user.isAuth = true
-      // console.log(response)
       navigate(SHOP_ROUTE)
     } catch (e) {
       if (e instanceof CustomError) {

@@ -2,23 +2,41 @@
 
 ## backend
 
-- npm i express pg pg-hstore sequelize cors dotenv
+- dotenv - чтение переменных среды
+- nodemon
+- uuid - генерация уникальных id
 
-- node js
 - express
     - cors
-    - json
     - express-fileupload - работа с загруженными файлами на сервер
-    - uuid - генерация уникальных id
-    - раздача статичных файлов сервером
+        - раздача статичных файлов сервером
+    - express-validator - валидация данных
+
 - postgresSQL
-- sequelize
-- jsonwebtoken bcryptjs - авторизация пользователей
+    - sequelize
+    - pg
+    - pg-hstore
+
+- jsonwebtoken
+    - bcryptjs - для accessToken
+    - cookie-parser - для refreshToken
+    
+- nodemailer - для отправки писем на почту
 
 ---
-- диаграмма базы данных, 8 таблиц
+- диаграмма базы данных
 - авторизаци пользователя по JWT
-- полноценное Rest API 
+    - создание access & refresh tokens
+    - отправка письма на почту для подтверждении регистрации - Gmail OAuth2
+    - refresh token
+        - сохраняем в базе
+        - передаем в cookie
+
+- Rest API 
+- реализация MVC
+    - отдельно модель (model.ts)
+    - отдельно бизнес логика (...Service.js)
+    - отдельно контроллер (...Controller.js)
 
 ## frontend
 
@@ -28,6 +46,8 @@
 - react-router-dom
 - MobX
 - jwt-decode
+- axios-auth-refresh - обработка 401 -
+    intersceptor для обработки 401 ответов с сервера - суть в том что идет запрос на refresh токена только на 1 попавшийся ответ с 401, остальные невалидные запросы перезапрашиваются уже с актуальным токеном - т.е. не будут тоже вызывать refresh
 
 ---
 

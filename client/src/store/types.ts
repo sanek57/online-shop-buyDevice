@@ -3,6 +3,16 @@ export interface User {
   name: string
   email: string
   password: string
+  isActivated?: boolean
+  activationLink?: string
+  createdAt?: Date
+  updatedAt?: Date
+}
+
+export interface AuthResponse {
+  id: number
+  accessToken: string
+  refreshToken: string
   createdAt?: Date
   updatedAt?: Date
 }

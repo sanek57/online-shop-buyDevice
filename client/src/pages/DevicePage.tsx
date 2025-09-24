@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Card, Col, Container, Image, Row } from 'react-bootstrap'
 import StarLogo from '../assets/img/Star.png'
-import { data, useParams } from 'react-router'
+import { useParams } from 'react-router'
 import { fetchOneDevice } from '../http/deviceAPI'
 import type { Device } from '../store/types'
 

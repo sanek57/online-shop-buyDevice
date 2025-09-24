@@ -2,40 +2,24 @@ import { BrowserRouter } from 'react-router'
 import { AppRouter } from './components/AppRouter'
 import { observer } from 'mobx-react-lite'
 import { useUserContext } from './hooks/useUserContext'
-import { useEffect, useState } from 'react'
-import { check } from './http/userAPI'
+import { useEffect } from 'react'
 import { NavBar } from './components/NavBar'
-import { Spinner } from 'react-bootstrap'
 import { CustomError } from './http'
-
-const delay = (ms: number, callback: () => void) =>
-  new Promise(res => setTimeout(() => callback(), ms))
 
 const App = observer(() => {
   const { user } = useUserContext()
-  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
-    async function checked() {
+    if (localStorage.getItem('token')) {
       try {
-        const response = await check()
-        user.user = response
-        user.isAuth = true
+        user.checkAuth()
       } catch (e) {
         if (e instanceof CustomError) {
-          // invalid token!!!
+          alert(e.message)
         }
-      } finally {
-        setLoading(false)
       }
     }
-
-    delay(1000, checked)
   }, [])
-
-  if (loading) {
-    return <Spinner animation={'grow'} />
-  }
 
   return (
     <BrowserRouter>
