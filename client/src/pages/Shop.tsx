@@ -7,6 +7,7 @@ import { observer } from 'mobx-react-lite'
 import { useDeviceContext } from '../hooks/useDeviceContext'
 import { Pages } from '../components/Pages'
 import { CustomError } from '../http'
+import { Loader } from '../components/Loader'
 
 export const Shop = observer(() => {
   const { devices } = useDeviceContext()
@@ -41,6 +42,8 @@ export const Shop = observer(() => {
 
     getDevices()
   }, [devices.page, devices.selectedBrand, devices.selectedType])
+
+  if (devices.loading) return <Loader />
 
   return (
     <Container>
