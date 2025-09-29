@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const tokenService = require('../service/token-service')
 
 module.exports = function (roles) {
   return function (req, res, next) {
@@ -11,9 +12,7 @@ module.exports = function (roles) {
         return res.status(401).json({ message: 'Не авторизован' })
       }
 
-      const decoded = jwt.verify(token, process.env.SECRET_KEY)
-
-      
+      const decoded = tokenService.validateAccessToken(token)
 
       if (decoded.roles !== roles) {
         return res.status(403).json({ message: 'Нет доступа' })

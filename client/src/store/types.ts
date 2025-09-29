@@ -17,6 +17,11 @@ export interface AuthResponse {
   updatedAt?: Date
 }
 
+export interface DeviceResponse {
+  count: number
+  rows: Device[]
+}
+
 export interface Type {
   id: number
   name: string

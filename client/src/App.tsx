@@ -15,7 +15,6 @@ const App = observer(() => {
         try {
           user.checkAuth()
         } catch (e) {
-          console.log(123, e)
           if (e instanceof CustomError) {
             alert(e.message)
           }

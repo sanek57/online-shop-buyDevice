@@ -2,7 +2,6 @@ import React, { useEffect, useState, type FC } from 'react'
 import { Modal, Button, Form, Dropdown, Row, Col } from 'react-bootstrap'
 import { useDeviceContext } from '../../hooks/useDeviceContext'
 import type { DescriptionDevice } from '../../store/types'
-import { fetchTypes, fetchBrands, createDevice } from '../../http/deviceAPI'
 import { observer } from 'mobx-react-lite'
 import { CustomError } from '../../http'
 
@@ -17,12 +16,17 @@ export const CreateDevice: FC<{
   const [info, setInfo] = useState<DescriptionDevice[]>([])
 
   useEffect(() => {
-    fetchTypes().then(data => {
-      devices.types = data
-    })
-    fetchBrands().then(data => {
-      devices.brands = data
-    })
+    const getData = async () => {
+      try {
+        await devices.fetchTypes()
+        await devices.fetchBrands()
+      } catch (e) {
+        if (e instanceof CustomError) {
+          alert(e.message)
+        }
+      }
+    }
+    getData()
   }, [])
 
   function addInfoHandler(): void {
@@ -43,7 +47,7 @@ export const CreateDevice: FC<{
     setInfo(info.map(i => (i.id === id ? { ...i, [key]: value } : i)))
   }
 
-  const addDeviceHandler = () => {
+  const addDeviceHandler = async () => {
     const formData = new FormData()
     formData.append('name', name)
     formData.append('price', `${price}`)
@@ -52,14 +56,15 @@ export const CreateDevice: FC<{
     formData.append('typeId', `${devices.selectedType.id}`)
     formData.append('info', JSON.stringify(info))
 
-    createDevice(formData)
-      .then(data => onHide())
-      .catch(err => {
-        if (err instanceof CustomError) {
-          alert(err.message)
-        }
-      })
-      .finally(() => {})
+    try {
+      await devices.createDevice(formData)
+    } catch (e) {
+      if (e instanceof CustomError) {
+        alert(e.message)
+      }
+    } finally {
+      onHide()
+    }
   }
 
   return (

@@ -1,8 +1,6 @@
 import axios, { type InternalAxiosRequestConfig, AxiosError } from 'axios'
 import type { AuthResponse } from '../store/types'
 import createAuthRefreshInterceptor from 'axios-auth-refresh'
-import type UserStore from '../store/userStore'
-import type { NavigateFunction } from 'react-router'
 
 export interface ErrorResponse {
   message: string
@@ -18,7 +16,8 @@ const $host = axios.create({
 })
 
 const $authHost = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}`,
+  // baseURL: `${import.meta.env.VITE_API_URL}`,
+  baseURL: `${import.meta.env.VITE_PUBLIC_URL_CLOUD_PUB}`,
   withCredentials: true,
 })
 

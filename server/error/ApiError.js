@@ -20,6 +20,10 @@ class ApiError extends Error {
   static forbidden(message) {
     return new ApiError(403, message)
   }
+
+  static failedPayment(message) {
+    return new ApiError(400, message)
+  }
 }
 
 module.exports = ApiError

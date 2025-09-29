@@ -5,11 +5,11 @@ const { where } = require('sequelize')
 class TokenService {
   generateTokens(payload) {
     const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_KEY, {
-      expiresIn: '5s', // время жизни токена
+      expiresIn: '15m', // время жизни токена
     })
 
     const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_KEY, {
-      expiresIn: '10s', // время жизни токена
+      expiresIn: '1d', // время жизни токена
     })
 
     return {

@@ -1,116 +1,64 @@
-import type { AxiosError, AxiosResponse } from 'axios'
-import type { Brand, Device, Type } from '../store/types'
-import { $authHost, CustomError, type ErrorResponse } from '.'
+import type { AxiosResponse } from 'axios'
+import { $authHost } from '.'
 
-export const createType = async (type: Type): Promise<AxiosResponse<Type>> => {
-  try {
-    const { data } = await $authHost.post<Type>('api/type', type)
+export const createType = async <T>(type: T): Promise<AxiosResponse<T>> => {
+  const response = await $authHost.post<T>('api/type', type)
 
-    return data
-  } catch (e) {
-    const { response } = e as AxiosError
-    const { data } = response as AxiosResponse<ErrorResponse>
-
-    throw new CustomError(data.message)
-  }
+  return response
 }
 
-export const fetchTypes = async (): Promise<AxiosResponse<Type[]>> => {
-  try {
-    const { data } = await $authHost.get<Type[]>('api/type')
+export const fetchTypes = async <T>(): Promise<AxiosResponse<T>> => {
+  const response = await $authHost.get<T>('api/type')
 
-    return data
-  } catch (e) {
-    const { response } = e as AxiosError
-    const { data } = response as AxiosResponse<ErrorResponse>
-
-    throw new CustomError(data.message)
-  }
+  return response
 }
 
-export const createBrad = async (
-  brand: Brand
-): Promise<AxiosResponse<Brand>> => {
-  try {
-    const { data } = await $authHost.post<Brand>('api/brand', brand)
+export const createBrand = async <T>(brand: T): Promise<AxiosResponse<T>> => {
+  const response = await $authHost.post<T>('api/brand', brand)
 
-    return data
-  } catch (e) {
-    const { response } = e as AxiosError
-    const { data } = response as AxiosResponse<ErrorResponse>
-
-    throw new CustomError(data.message)
-  }
+  return response
 }
 
-export const fetchBrands = async (): Promise<AxiosResponse<Brand[]>> => {
-  try {
-    const { data } = await $authHost.get<Brand[]>('api/brand')
+export const fetchBrands = async <T>(): Promise<AxiosResponse<T>> => {
+  const response = await $authHost.get<T>('api/brand')
 
-    return data
-  } catch (e) {
-    const { response } = e as AxiosError
-    const { data } = response as AxiosResponse<ErrorResponse>
-
-    throw new CustomError(data.message)
-  }
+  return response
 }
 
-export const createDevice = async (
+export const createDevice = async <T>(
   device: FormData
-): Promise<AxiosResponse<Device>> => {
-  try {
-    const { data } = await $authHost.post<Device>('api/device', device)
+): Promise<AxiosResponse<T>> => {
+  const response = await $authHost.post<T>('api/device', device)
 
-    return data
-  } catch (e) {
-    const { response } = e as AxiosError
-    const { data } = response as AxiosResponse<ErrorResponse>
-
-    throw new CustomError(data.message)
-  }
+  return response
 }
 
-interface DeviceResponse {
-  count: number
-  rows: Device[]
-}
-
-export const fetchDevices = async (
+export const fetchDevices = async <T>(
   typeId: number | null,
   brandId: number | null,
   page: number,
   limit: number
-): Promise<AxiosResponse<DeviceResponse>> => {
-  try {
-    // тут еще сделано для пагинации
-    const { data } = await $authHost.get<DeviceResponse>('api/device', {
-      params: {
-        typeId,
-        brandId,
-        page,
-        limit,
-      },
-    })
+): Promise<AxiosResponse<T>> => {
+  // тут еще сделано для пагинации
 
-    return data
-  } catch (e) {
-    const { response } = e as AxiosError
-    const { data } = response as AxiosResponse<ErrorResponse>
+  console.log(typeId, brandId, page, limit)
 
-    throw new CustomError(data.message)
-  }
+  const response = await $authHost.get<T>('api/device', {
+    params: {
+      typeId,
+      brandId,
+      page,
+      limit,
+    },
+  })
+
+  return response
 }
 
-export const fetchOneDevice = async (id: string): Promise<Device> => {
-  try {
-    const { data } = await $authHost.get<Device>(`api/device/${id}`)
+export const fetchOneDevice = async <T>(
+  id: string
+): Promise<AxiosResponse<T>> => {
+  const response = await $authHost.get<T>(`api/device/${id}`)
 
-    return data
-  } catch (e) {
-    const { response } = e as AxiosError
-    const { data } = response as AxiosResponse<ErrorResponse>
-
-    throw new CustomError(data.message)
-  }
+  return response
 }

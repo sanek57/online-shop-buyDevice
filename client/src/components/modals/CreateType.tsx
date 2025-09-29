@@ -1,24 +1,27 @@
 import React, { useState, type FC } from 'react'
 import { Modal, Button, Form } from 'react-bootstrap'
-import { createType } from '../../http/deviceAPI'
 import { CustomError } from '../../http'
 import type { Type } from '../../store/types'
+import { useDeviceContext } from '../../hooks/useDeviceContext'
 
 export const CreateType: FC<{
   show: boolean | undefined
   onHide: () => void
 }> = ({ show, onHide }) => {
   const [value, setValue] = useState<string>('')
+  const { devices } = useDeviceContext()
 
-  const addTypeHandler = () => {
-    createType({ name: value } as Type)
-      .then(data => setValue(''))
-      .catch(err => {
-        if (err instanceof CustomError) {
-          alert(err.message)
-        }
-      })
-      .finally(() => onHide())
+  const addTypeHandler = async () => {
+    try {
+      await devices.createType({ name: value } as Type)
+      setValue('')
+    } catch (e) {
+      if (e instanceof CustomError) {
+        alert(e.message)
+      }
+    } finally {
+      onHide()
+    }
   }
 
   return (

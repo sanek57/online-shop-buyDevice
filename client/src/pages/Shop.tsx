@@ -5,35 +5,41 @@ import { BrandBar } from '../components/BrandBar'
 import { DeviceList } from '../components/DeviceList'
 import { observer } from 'mobx-react-lite'
 import { useDeviceContext } from '../hooks/useDeviceContext'
-import { fetchBrands, fetchDevices, fetchTypes } from '../http/deviceAPI'
 import { Pages } from '../components/Pages'
+import { CustomError } from '../http'
 
 export const Shop = observer(() => {
   const { devices } = useDeviceContext()
 
   useEffect(() => {
-    fetchTypes().then(data => {
-      devices.types = data
-    })
-    fetchBrands().then(data => {
-      devices.brands = data
-    })
-    fetchDevices(null, null, 1, 2).then(data => {
-      devices.devices = data.rows
-      devices.totalCount = data.count
-    })
+    const getData = async () => {
+      try {
+        await devices.fetchTypes()
+        await devices.fetchBrands()
+
+        await devices.fetchDevices(-1, -1, 1, 2)
+      } catch (e) {
+        if (e instanceof CustomError) {
+          alert(e.message)
+        }
+      }
+    }
+
+    getData()
   }, [])
 
   useEffect(() => {
-    fetchDevices(
-      devices.selectedType?.id,
-      devices.selectedBrand?.id,
-      devices.page,
-      2
-    ).then(data => {
-      devices.devices = data.rows
-      devices.totalCount = data.count
-    })
+    const getDevices = async () => {
+      try {
+        await devices.fetchDevices()
+      } catch (e) {
+        if (e instanceof CustomError) {
+          alert(e.message)
+        }
+      }
+    }
+
+    getDevices()
   }, [devices.page, devices.selectedBrand, devices.selectedType])
 
   return (
